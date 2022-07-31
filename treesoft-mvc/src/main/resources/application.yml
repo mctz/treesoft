@@ -1,0 +1,9 @@
+server:
+   port: 8080
+spring:
+   mvc:
+      view:
+         prefix: /WEB-INF/views/
+         suffix: .jsp
+   profiles:
+      active: dev
