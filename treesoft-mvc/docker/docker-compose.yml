@@ -1,0 +1,72 @@
+version: '3'
+networks:
+  default:
+    name: devops
+    driver: bridge
+    ipam:
+      config:
+      - subnet: 172.88.88.0/24
+services:
+  mysql:
+    image: mysql:5.7
+    container_name: mysql_5.7
+    deploy:
+      resources:
+        limits:
+          cpus: '0.8'
+          memory: 400M
+        reservations:
+          memory: 300M
+    ports:
+    - 3316:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: root123
+      MYSQL_USER: treesoft
+      MYSQL_PASSWORD: treesoft123
+      MYSQL_DATABASE: treesoft
+    command:
+      --default-authentication-plugin=mysql_native_password
+      --character-set-server=utf8mb4
+      --collation-server=utf8mb4_general_ci
+      --explicit_defaults_for_timestamp=true
+      --lower_case_table_names=1
+      --sql_mode=STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION
+    restart: on-failure
+    volumes:
+    - ./init:/docker-entrypoint-initdb.d/
+    logging:
+      driver: json-file
+      options:
+        max-size: 5m
+        max-file: '1'
+    networks:
+      default:
+        ipv4_address: 172.88.88.11
+  dms:
+    image: 00fly/treesoft:0.0.1
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: dms
+    deploy:
+      resources:
+        limits:
+          cpus: '0.8'
+          memory: 400M
+        reservations:
+          memory: 200M
+    ports:
+    - 8084:8080
+    environment:
+    - jdbc.url=jdbc:mysql://172.88.88.11:3306/treesoft?useSSL=false&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&autoReconnect=true
+    - jdbc.username=treesoft
+    - jdbc.password=treesoft123
+    restart: on-failure
+    logging:
+      driver: json-file
+      options:
+        max-size: 5m
+        max-file: '1'
+    networks:
+      default:
+        ipv4_address: 172.88.88.12

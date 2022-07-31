@@ -1,0 +1,74 @@
+
+
+说明：
+
+1、将压缩文件解压(程序文件中已包括windows版本的JDK1.7, tomcat7.0, treesoft项目)。
+
+2、Linux服务器的Tomcat,JDK请自行安装，支持JDK1.7+。
+
+3、treeDMS-2.X.X\webapps\treesoft目录内容为编译后的程序，直接上传到服务器Tomcat的webapps目录中。
+
+4、启动Tomcat。
+
+5、打开浏览器，输入http://192.168.1.8:8085/treesoft访问系统（IP,端口按实际修改）
+
+6、能打开TreeSoft数据库管理系统登录页，说明安装成功！
+
+7、默认用户名1：treesoft，用户名2:admin ，密码均为：treesoft，登录后请及时修改密码。
+
+8、登录后，点击右上角参数配置按钮，打开配置数据库连接信息，并测试保存信息。
+
+9、Oracle11g及以上版本默认不允许远程连接，请修改相应配置（修改监听器的主机地址为计算机名）
+
+10、MySQL5.6及以上版本默认不允许远程连接，请修改相应配置（update  mysql.user set host ='%' where user='root'）
+
+11、SQL Server2008及以上版本默认不允许远程连接，请修改相应配置。
+
+12、本软件支持 MySQL，Oracle，PostgreSQL, SQL Server,mongoDB，Hive等主流数据库并存，同时连接管理。
+
+13、MySQL创建存储过程请直接使用create procedure, DIMLIMIT语句请直接省略掉。
+
+14、数据交换功能支持MySql,Oracle,PostgreSQL,SQL Server,mongoDB,Hive等数据库之间的定时数据抽取、交换同步。
+
+15、本系统支持windows,linux ,mac等操作系统。
+
+16、本系统支持PC端，平板端，手机端登录使用。
+
+17、mongoDB开启auth认证模式，需要JDK1.8以上版本才支持对应的加密算法，请自行安装JDK1.8
+
+18、SQL Server2005及以上，需要JDK1.8以上版本才支持对应的加密算法，请自行安装JDK1.8
+
+19、未购买授权，本公司不承担因使用不当造成的任何经济损失！
+
+*********************************************************************
+
+ 
+支持mongoDB以下shell命令,可直接在SQL编辑区执行：
+
+1、db.t1.find()，查询命令,t1指具体的collection
+
+2、db.t1.insert()，新增命令
+
+3、db.t1.remove()，删除命令
+
+
+*********************************************************************
+  
+
+功能：
+
+    TreeSoft数据库管理系统使用JAVA开发，采用稳定通用的springMVC +JDBC架构，
+实现基于WEB方式对 MySQL，Oracle，PostgreSQL, SQL Server,mongoDB,Hive 数据库进行维护管理操作。
+
+    功能包括：数据库的展示,库表的展示，表字段结构的展示，SQL语句的在线编辑批量执行，SQL自动补全，表结构的在线设计维护，
+复制表，清空表，导出表，导出表数据，数据库状态监控，数据的在线编辑维护，数据库备份还原，表备份，查询语句保存，JSON数据格式化，
+SQL语法帮助，在线数据源选择配置等，数据交换同步,数据可视化。系统内置14套UI皮肤，45套代码编辑区UI方案，使用中可以依个人喜好选择配色方案。
+
+   本系统不但稳定，实用，功能强大，交互友好，而且介面美观，可自由选择皮肤配色，推荐大家使用!
+
+   专业版增加用户管理，性能监控指标等功能，欢迎询价购买！ email:treesoft@qq.com
+
+
+                                     福州青格软件有限公司-版权所有
+                                      http://www.treesoft.cn
+
