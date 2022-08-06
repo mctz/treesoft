@@ -15,10 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @Controller
 @RequestMapping({"treesoft"})
@@ -71,12 +68,13 @@ public class LoginController {
             return "system/login";
         }
         String sql = " select * from dms_users where  username=?";
-        Map<String, Object> map = jdbcTemplate.queryForMap(sql, username);
-        if (map.isEmpty()) {
+        List<Map<String, Object>> mapList = jdbcTemplate.queryForList(sql, username);
+        if (mapList.isEmpty()) {
             message = "您输入的帐号或密码有误！";
             request.setAttribute("message", message);
             return "system/login";
         }
+        Map<String, Object>map = mapList.get(0);
         String pas = (String) map.get("password");
         String status = (String) map.get("status");
         String expiration = (String) map.get("expiration");
