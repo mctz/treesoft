@@ -27,7 +27,7 @@ public class TaskDao
     public Page<Map<String, Object>> taskList(Page<Map<String, Object>> page)
     {
         String sql =
-            " select t1.id, t1.state, t1.name, t1.createDate, t1.updateDate, t1.souceConfig_id as souceConfigId, t1.souceDataBase, t1.doSql, t1.targetConfig_id as targetConfigId, t1.targetDataBase, t1.targetTable, t1.cron, t1.operation, t1.comments, t1. status, t2.name||', '||t2.ip||':'||t2.port as souceConfig, t3.ip||':'||t3.port as targetConfig from treesoft_task t1 left join treesoft_config t2 on t1.souceConfig_id = t2.id LEFT JOIN treesoft_config t3 on t1.targetConfig_id = t3.id ";
+            " select t1.id, t1.state, t1.name, t1.createDate, t1.updateDate, t1.souceConfig_id as souceConfigId, t1.souceDataBase, t1.doSql, t1.targetConfig_id as targetConfigId, t1.targetDataBase, t1.targetTable, t1.cron, t1.operation, t1.comments, t1. status, t2.name||', '||t2.ip||':'||t2.port as souceConfig, t3.ip||':'||t3.port as targetConfig from dms_task t1 left join dms_config t2 on t1.souceConfig_id = t2.id LEFT JOIN dms_config t3 on t1.targetConfig_id = t3.id ";
         int rowCount = jdbcTemplate.queryForList(sql).size();
         List<Map<String, Object>> list = jdbcTemplate.queryForList(sql + " limit ?, ?", (page.getPageNo() - 1) * page.getPageSize(), page.getPageSize());
         page.setTotalCount(rowCount);
@@ -38,13 +38,13 @@ public class TaskDao
     public List<Map<String, Object>> getTaskListById(String[] ids)
     {
         String sql =
-            "select id, name, souceConfig_id as souceConfigId, souceDataBase, doSql, targetConfig_id as targetConfigId, targetDataBase, targetTable, cron, operation, comments, status, state, qualification from treesoft_task where id in(:ids)";
+            "select id, name, souceConfig_id as souceConfigId, souceDataBase, doSql, targetConfig_id as targetConfigId, targetDataBase, targetTable, cron, operation, comments, status, state, qualification from dms_task where id in(:ids)";
         return namedJdbcTemplate.queryForList(sql, Collections.singletonMap("ids", ids));
     }
     
     public boolean deleteTask(String[] ids)
     {
-        String sql = "delete from treesoft_task where id in (:ids)";
+        String sql = "delete from dms_task where id in (:ids)";
         return namedJdbcTemplate.update(sql, Collections.singletonMap("ids", ids)) > 0;
     }
     
@@ -65,13 +65,13 @@ public class TaskDao
         if (!id.equals(""))
         {
             sql =
-                "update treesoft_task set name=:name, souceConfig_id=:souceConfigId, souceDataBase=:souceDataBase, doSql=:doSql, targetConfig_id=:targetConfigId, targetDataBase =:targetDataBase, targetTable=:targetTable, cron=:cron, status=:status, state=:state, qualification=:qualification, comments=:comments, operation=:operation where id=:id";
+                "update dms_task set name=:name, souceConfig_id=:souceConfigId, souceDataBase=:souceDataBase, doSql=:doSql, targetConfig_id=:targetConfigId, targetDataBase =:targetDataBase, targetTable=:targetTable, cron=:cron, status=:status, state=:state, qualification=:qualification, comments=:comments, operation=:operation where id=:id";
             return namedJdbcTemplate.update(sql, new BeanPropertySqlParameterSource(task)) > 0;
         }
         else
         {
             sql =
-                " insert into treesoft_task (name, createDate, updateDate, souceConfig_id, souceDataBase, doSql, targetConfig_id, targetDataBase, targetTable, cron, operation, comments, status, qualification, state ) values ( :name, '"
+                " insert into dms_task (name, createDate, updateDate, souceConfig_id, souceDataBase, doSql, targetConfig_id, targetDataBase, targetTable, cron, operation, comments, status, qualification, state ) values ( :name, '"
                     + DateUtil.getDateTime() + "', '" + DateUtil.getDateTime()
                     + "', :souceConfigId , :souceDataBase, :doSql, :targetConfigId, :targetDataBase, :targetTable, :cron, :operation, :comments, :status, :qualification, :state) ";
             return jdbcTemplate.update(sql, new BeanPropertySqlParameterSource(task)) > 0;
@@ -80,20 +80,20 @@ public class TaskDao
     
     public boolean taskUpdateStatus(String taskId, String status)
     {
-        String sql = "update treesoft_task set status=? where id=?";
+        String sql = "update dms_task set status=? where id=?";
         return jdbcTemplate.update(sql, status, taskId) > 0;
     }
     
     public Map<String, Object> getTask(String id)
     {
         String sql =
-            "select id, name, souceConfig_id as souceConfigId, souceDataBase, doSql, targetConfig_id as targetConfigId, targetDataBase, targetTable, cron, operation, comments, status, state, qualification from treesoft_task where id=?";
+            "select id, name, souceConfig_id as souceConfigId, souceDataBase, doSql, targetConfig_id as targetConfigId, targetDataBase, targetTable, cron, operation, comments, status, state, qualification from dms_task where id=?";
         return jdbcTemplate.queryForMap(sql, id);
     }
     
     public Page<Map<String, Object>> taskLogList(Page<Map<String, Object>> page, String taskId)
     {
-        String sql = " select id, createDate, status, comments from treesoft_task_log where task_id =? order by createdate desc";
+        String sql = " select id, createDate, status, comments from dms_task_log where task_id =? order by createdate desc";
         int rowCount = jdbcTemplate.queryForList(sql, taskId).size();
         List<Map<String, Object>> list = jdbcTemplate.queryForList(sql + " limit ?, ?", (page.getPageNo() - 1) * page.getPageSize(), page.getPageSize());
         page.setTotalCount(rowCount);
@@ -107,32 +107,32 @@ public class TaskDao
         if (StringUtils.isBlank(state))
         {
             sql =
-                "select t1.id, t1.state, t1.name, t1.createDate, t1.updateDate, t1.souceConfig_id as souceConfigId, t1.souceDataBase, t1.doSql, t1.targetConfig_id as targetConfigId, t1.targetDataBase, t1.targetTable, t1.cron, t1.operation, t1.comments, t1.status, t2.ip||':'||t2.port as souceConfig, t3.ip||':'||t3.port as targetConfig from treesoft_task t1 left join treesoft_config t2 on t1.souceConfig_id = t2.id LEFT JOIN treesoft_config t3 on t1.targetConfig_id = t3.id ";
+                "select t1.id, t1.state, t1.name, t1.createDate, t1.updateDate, t1.souceConfig_id as souceConfigId, t1.souceDataBase, t1.doSql, t1.targetConfig_id as targetConfigId, t1.targetDataBase, t1.targetTable, t1.cron, t1.operation, t1.comments, t1.status, t2.ip||':'||t2.port as souceConfig, t3.ip||':'||t3.port as targetConfig from dms_task t1 left join dms_config t2 on t1.souceConfig_id = t2.id LEFT JOIN dms_config t3 on t1.targetConfig_id = t3.id ";
             return jdbcTemplate.queryForList(sql);
         }
         else
         {
             sql =
-                "select t1.id, t1.state, t1.name, t1.createDate, t1.updateDate, t1.souceConfig_id as souceConfigId, t1.souceDataBase, t1.doSql, t1.targetConfig_id as targetConfigId, t1.targetDataBase, t1.targetTable, t1.cron, t1.operation, t1.comments, t1.status, t2.ip||':'||t2.port as souceConfig, t3.ip||':'||t3.port as targetConfig from treesoft_task t1 left join treesoft_config t2 on t1.souceConfig_id = t2.id LEFT JOIN treesoft_config t3 on t1.targetConfig_id = t3.id where t1.state=?";
+                "select t1.id, t1.state, t1.name, t1.createDate, t1.updateDate, t1.souceConfig_id as souceConfigId, t1.souceDataBase, t1.doSql, t1.targetConfig_id as targetConfigId, t1.targetDataBase, t1.targetTable, t1.cron, t1.operation, t1.comments, t1.status, t2.ip||':'||t2.port as souceConfig, t3.ip||':'||t3.port as targetConfig from dms_task t1 left join dms_config t2 on t1.souceConfig_id = t2.id LEFT JOIN dms_config t3 on t1.targetConfig_id = t3.id where t1.state=?";
             return jdbcTemplate.queryForList(sql, state);
         }
     }
     
     public boolean deleteTaskLog(String[] ids)
     {
-        String sql = "delete from treesoft_task_log where id in (:ids)";
+        String sql = "delete from dms_task_log where id in (:ids)";
         return namedJdbcTemplate.update(sql, Collections.singletonMap("ids", ids)) > 0;
     }
     
     public boolean deleteTaskLogByDS(String id)
     {
-        return jdbcTemplate.update("delete from treesoft_task_log where task_id =?", id) > 0;
+        return jdbcTemplate.update("delete from dms_task_log where task_id =?", id) > 0;
     }
     
     public boolean taskLogSave(String status, String comments, String taskId)
     {
         String comments2 = comments.replaceAll("'", "''");
-        String sql = "insert into treesoft_task_log (createDate, status, comments, task_id) values (?, ?, ?, ?)";
+        String sql = "insert into dms_task_log (createDate, status, comments, task_id) values (?, ?, ?, ?)";
         return jdbcTemplate.update(sql, DateUtil.getDateTime(), status, comments2, taskId) > 0;
     }
 }

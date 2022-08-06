@@ -66,13 +66,13 @@ public class PermissionDao
     
     public List<Map<String, Object>> getConfigAllDataBase()
     {
-        String sql = " select id, name, databaseType,databaseName, port, ip from  treesoft_config order by isdefault desc ";
+        String sql = " select id, name, databaseType,databaseName, port, ip from  dms_config order by isdefault desc ";
         return jdbcTemplate.queryForList(sql);
     }
     
     public List<Map<String, Object>> getAllDataBaseById(String datascope)
     {
-        String sql = " select id, name, databaseType, databaseName, port, ip  from  treesoft_config where id in (" + datascope + ") order by isdefault desc ";
+        String sql = " select id, name, databaseType, databaseName, port, ip  from  dms_config where id in (" + datascope + ") order by isdefault desc ";
         return jdbcTemplate.queryForList(sql);
     }
     
@@ -356,22 +356,22 @@ public class PermissionDao
     
     public boolean saveSearchHistory(String name, String sql, String dbName, String userId)
     {
-        return jdbcTemplate.update("insert into treesoft_searchHistory (createdate, sqls, name, `database`,user_id) values (now(), ?, ?, ?, ?)", sql, name, dbName, userId) > 0;
+        return jdbcTemplate.update("insert into dms_searchHistory (createdate, sqls, name, `database`,user_id) values (now(), ?, ?, ?, ?)", sql, name, dbName, userId) > 0;
     }
     
     public boolean updateSearchHistory(String id, String name, String sql, String dbName)
     {
-        return jdbcTemplate.update("update treesoft_searchHistory set createdate=now(), sqls=?, name =?, `database`=? where id=?", sql, name, dbName, id) > 0;
+        return jdbcTemplate.update("update dms_searchHistory set createdate=now(), sqls=?, name =?, `database`=? where id=?", sql, name, dbName, id) > 0;
     }
     
     public boolean deleteSearchHistory(String id)
     {
-        return jdbcTemplate.update("delete from treesoft_searchHistory  where id=?", id) > 0;
+        return jdbcTemplate.update("delete from dms_searchHistory  where id=?", id) > 0;
     }
     
     public List<Map<String, Object>> selectSearchHistory()
     {
-        return jdbcTemplate.queryForList(" select * from  treesoft_searchHistory ");
+        return jdbcTemplate.queryForList(" select * from  dms_searchHistory ");
     }
     
     public boolean configUpdate(Config config)
@@ -384,7 +384,7 @@ public class PermissionDao
         {
             if (StringUtils.isNotBlank(config.getPassword()))
             {
-                sql = " update treesoft_config  set databaseType=?, databaseName=?, userName=?,  password=?, isdefault=?, name =?, port=?, ip=?, url=? where id=?";
+                sql = " update dms_config  set databaseType=?, databaseName=?, userName=?,  password=?, isdefault=?, name =?, port=?, ip=?, url=? where id=?";
                 bl = jdbcTemplate.update(sql,
                     config.getDatabaseType(),
                     config.getDatabaseName(),
@@ -399,14 +399,14 @@ public class PermissionDao
             }
             else
             {
-                sql = " update treesoft_config  set databaseType=?, databaseName=?, userName=?,  isdefault=?, name =?, port=?, ip=?, url=? where id=?";
+                sql = " update dms_config  set databaseType=?, databaseName=?, userName=?,  isdefault=?, name =?, port=?, ip=?, url=? where id=?";
                 bl = jdbcTemplate
                     .update(sql, config.getDatabaseType(), config.getDatabaseName(), config.getUserName(), isdefault, config.getName(), config.getPort(), config.getIp(), config.getUrl(), id) > 0;
             }
         }
         else
         {
-            sql = " insert into treesoft_config (name, createDate, databaseType, databaseName, userName, password, port, ip, isdefault, url ) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ";
+            sql = " insert into dms_config (name, createDate, databaseType, databaseName, userName, password, port, ip, isdefault, url ) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ";
             bl = jdbcTemplate.update(sql,
                 config.getName(),
                 DateUtil.getDateTime(),
@@ -419,25 +419,25 @@ public class PermissionDao
                 isdefault,
                 config.getUrl()) > 0;
         }
-        List<Map<String, Object>> list3 = jdbcTemplate.queryForList("select id from  treesoft_config order by isdefault desc");
+        List<Map<String, Object>> list3 = jdbcTemplate.queryForList("select id from  dms_config order by isdefault desc");
         StringBuilder ids = new StringBuilder();
         for (Map<String, Object> map : list3)
         {
             ids.append(map.get("id")).append(",");
         }
-        String updateSQL = "update treesoft_users set datascope =? where username in ('admin','treesoft')";
+        String updateSQL = "update dms_users set datascope =? where username in ('admin','treesoft')";
         jdbcTemplate.update(updateSQL, ids.toString().substring(0, ids.length() - 1));
         return bl;
     }
     
     public List<Map<String, Object>> selectUserByName(String userName)
     {
-        return jdbcTemplate.queryForList("select * from  treesoft_users where username=?", userName);
+        return jdbcTemplate.queryForList("select * from  dms_users where username=?", userName);
     }
     
     public boolean updateUserPass(String userId, String newPass)
     {
-        return jdbcTemplate.update("update treesoft_users set password=? where id=?", newPass, userId) > 0;
+        return jdbcTemplate.update("update dms_users set password=? where id=?", newPass, userId) > 0;
     }
     
     public int executeSqlNotRes(String sql, String dbName, String databaseConfigId)
@@ -613,7 +613,7 @@ public class PermissionDao
     
     public List<Map<String, Object>> selectSqlStudy()
     {
-        return jdbcTemplate.queryForList("select id, title, content, pid, icon from treesoft_study");
+        return jdbcTemplate.queryForList("select id, title, content, pid, icon from dms_study");
     }
     
     public int saveDesginColumn(Map<String, String> map, String databaseName, String tableName, String databaseConfigId)
@@ -2339,7 +2339,7 @@ public class PermissionDao
     
     public Map<String, Object> getConfig(String id)
     {
-        String sql = "select id, name, databaseType, ip, port, databaseName, userName, password, isdefault from treesoft_config where id=?";
+        String sql = "select id, name, databaseType, ip, port, databaseName, userName, password, isdefault from dms_config where id=?";
         Map<String, Object> map = jdbcTemplate.queryForMap(sql, id);
         String password = CryptoUtil.decode(map.get("password").toString());
         if (password.split("`").length > 1)
@@ -3101,7 +3101,7 @@ public class PermissionDao
     
     public Page<Map<String, Object>> configList(Page<Map<String, Object>> page)
     {
-        String sql = "select * from  treesoft_config";
+        String sql = "select * from  dms_config";
         int rowCount = jdbcTemplate.queryForList(sql).size();
         List<Map<String, Object>> list = jdbcTemplate.queryForList(sql + "  limit ?, ?", (page.getPageNo() - 1) * page.getPageSize(), page.getPageSize());
         page.setTotalCount(rowCount);
@@ -3111,18 +3111,18 @@ public class PermissionDao
     
     public List<Map<String, Object>> getAllConfigList()
     {
-        return jdbcTemplate.queryForList("select * from  treesoft_config");
+        return jdbcTemplate.queryForList("select * from  dms_config");
     }
     
     public boolean deleteConfig(String[] ids)
     {
-        String sql = "delete from treesoft_config where id in (:ids)";
+        String sql = "delete from dms_config where id in (:ids)";
         return namedJdbcTemplate.update(sql, Collections.singletonMap("ids", Arrays.asList(ids))) > 0;
     }
     
     public boolean authorize()
     {
-        jdbcTemplate.queryForList(" select id, computer, license,valid  from  treesoft_config ");
+        jdbcTemplate.queryForList(" select id, computer, license,valid  from  dms_config ");
         return true;
     }
     
@@ -3157,7 +3157,7 @@ public class PermissionDao
     public Page<Map<String, Object>> dataSynchronizeList(Page<Map<String, Object>> page)
     {
         String sql =
-            " select t1.id, t1.state, t1.name, t1.createDate,t1.updateDate,t1.souceConfig_id as souceConfigId, t1.souceDataBase, t1.doSql,t1.targetConfig_id as targetConfigId, t1.targetDataBase,t1.targetTable, t1.cron, t1.operation, t1.comments,t1. status, t2.name||','||t2.ip||':'||t2.port as souceConfig, t3.ip||':'||t3.port as targetConfig from  treesoft_data_synchronize t1 left join treesoft_config t2 on t1.souceConfig_id = t2.id LEFT JOIN treesoft_config t3 on t1.targetConfig_id = t3.id ";
+            " select t1.id, t1.state, t1.name, t1.createDate,t1.updateDate,t1.souceConfig_id as souceConfigId, t1.souceDataBase, t1.doSql,t1.targetConfig_id as targetConfigId, t1.targetDataBase,t1.targetTable, t1.cron, t1.operation, t1.comments,t1. status, t2.name||','||t2.ip||':'||t2.port as souceConfig, t3.ip||':'||t3.port as targetConfig from  dms_data_synchronize t1 left join dms_config t2 on t1.souceConfig_id = t2.id LEFT JOIN dms_config t3 on t1.targetConfig_id = t3.id ";
         int rowCount = jdbcTemplate.queryForList(sql).size();
         List<Map<String, Object>> list = jdbcTemplate.queryForList(sql + "  limit ?, ?", (page.getPageNo() - 1) * page.getPageSize(), page.getPageSize());
         page.setTotalCount(rowCount);
@@ -3168,7 +3168,7 @@ public class PermissionDao
     public List<Map<String, Object>> getDataSynchronizeListById(String[] ids)
     {
         String sql =
-            "select id, name, souceConfig_id as souceConfigId,souceDataBase, doSql ,targetConfig_id as targetConfigId, targetDataBase,targetTable, cron,operation,comments,status,state, qualification from  treesoft_data_synchronize where id in (:ids)";
+            "select id, name, souceConfig_id as souceConfigId,souceDataBase, doSql ,targetConfig_id as targetConfigId, targetDataBase,targetTable, cron,operation,comments,status,state, qualification from  dms_data_synchronize where id in (:ids)";
         return namedJdbcTemplate.queryForList(sql, Collections.singletonMap("ids", Arrays.asList(ids)));
     }
     
@@ -3178,20 +3178,20 @@ public class PermissionDao
         if (StringUtils.isBlank(state))
         {
             sql =
-                " select t1.id, t1.state , t1.name, t1.createDate,t1.updateDate ,t1.souceConfig_id as souceConfigId, t1.souceDataBase, t1.doSql ,t1.targetConfig_id as targetConfigId, t1.targetDataBase,t1.targetTable, t1.cron, t1.operation, t1.comments, t1.status , t2.ip||':'||t2.port as souceConfig , t3.ip||':'||t3.port as targetConfig from  treesoft_data_synchronize t1 left join treesoft_config t2 on t1.souceConfig_id = t2.id LEFT JOIN treesoft_config t3 on t1.targetConfig_id = t3.id  ";
+                " select t1.id, t1.state , t1.name, t1.createDate,t1.updateDate ,t1.souceConfig_id as souceConfigId, t1.souceDataBase, t1.doSql ,t1.targetConfig_id as targetConfigId, t1.targetDataBase,t1.targetTable, t1.cron, t1.operation, t1.comments, t1.status , t2.ip||':'||t2.port as souceConfig , t3.ip||':'||t3.port as targetConfig from  dms_data_synchronize t1 left join dms_config t2 on t1.souceConfig_id = t2.id LEFT JOIN dms_config t3 on t1.targetConfig_id = t3.id  ";
             return jdbcTemplate.queryForList(sql);
         }
         else
         {
             sql =
-                " select t1.id, t1.state , t1.name, t1.createDate,t1.updateDate ,t1.souceConfig_id as souceConfigId, t1.souceDataBase, t1.doSql ,t1.targetConfig_id as targetConfigId, t1.targetDataBase,t1.targetTable, t1.cron, t1.operation, t1.comments, t1.status , t2.ip||':'||t2.port as souceConfig , t3.ip||':'||t3.port as targetConfig from  treesoft_data_synchronize t1 left join treesoft_config t2 on t1.souceConfig_id = t2.id LEFT JOIN treesoft_config t3 on t1.targetConfig_id = t3.id where t1.state=?";
+                " select t1.id, t1.state , t1.name, t1.createDate,t1.updateDate ,t1.souceConfig_id as souceConfigId, t1.souceDataBase, t1.doSql ,t1.targetConfig_id as targetConfigId, t1.targetDataBase,t1.targetTable, t1.cron, t1.operation, t1.comments, t1.status , t2.ip||':'||t2.port as souceConfig , t3.ip||':'||t3.port as targetConfig from  dms_data_synchronize t1 left join dms_config t2 on t1.souceConfig_id = t2.id LEFT JOIN dms_config t3 on t1.targetConfig_id = t3.id where t1.state=?";
             return jdbcTemplate.queryForList(sql, state);
         }
     }
     
     public boolean deleteDataSynchronize(String[] ids)
     {
-        String sql = "delete from treesoft_data_synchronize where id in (:ids)";
+        String sql = "delete from dms_data_synchronize where id in (:ids)";
         return namedJdbcTemplate.update(sql, Collections.singletonMap("ids", Arrays.asList(ids))) > 0;
     }
     
@@ -3211,7 +3211,7 @@ public class PermissionDao
         dataSynchronize.setDoSql(doSql);
         if (!id.equals(""))
         {
-            sql = " update treesoft_data_synchronize  set name='" + dataSynchronize.getName() + "'," + "souceConfig_id='" + dataSynchronize.getSouceConfigId() + "'," + "souceDataBase='"
+            sql = " update dms_data_synchronize  set name='" + dataSynchronize.getName() + "'," + "souceConfig_id='" + dataSynchronize.getSouceConfigId() + "'," + "souceDataBase='"
                 + dataSynchronize.getSouceDataBase() + "', " + "doSql='" + dataSynchronize.getDoSql() + "', " + "targetConfig_id='" + dataSynchronize.getTargetConfigId() + "', " + "targetDataBase ='"
                 + dataSynchronize.getTargetDataBase() + "', " + "targetTable='" + dataSynchronize.getTargetTable() + "', " + "cron='" + dataSynchronize.getCron() + "', " + "status='" + status + "', "
                 + "state='" + dataSynchronize.getState() + "', " + "qualification='" + dataSynchronize.getQualification() + "', " + "comments='" + dataSynchronize.getComments() + "', " + "operation='"
@@ -3220,7 +3220,7 @@ public class PermissionDao
         else
         {
             sql =
-                " insert into treesoft_data_synchronize ( name, createDate,updateDate,souceConfig_id,souceDataBase, doSql,targetConfig_id,targetDataBase,targetTable, cron,operation,comments,status,qualification,state ) values ( '"
+                " insert into dms_data_synchronize ( name, createDate,updateDate,souceConfig_id,souceDataBase, doSql,targetConfig_id,targetDataBase,targetTable, cron,operation,comments,status,qualification,state ) values ( '"
                     + dataSynchronize.getName() + "','" + DateUtil.getDateTime() + "','" + DateUtil.getDateTime() + "','" + dataSynchronize.getSouceConfigId() + "','"
                     + dataSynchronize.getSouceDataBase() + "','" + dataSynchronize.getDoSql() + "','" + dataSynchronize.getTargetConfigId() + "','" + dataSynchronize.getTargetDataBase() + "','"
                     + dataSynchronize.getTargetTable() + "','" + dataSynchronize.getCron() + "','" + dataSynchronize.getOperation() + "','" + dataSynchronize.getComments() + "','" + status + "','"
@@ -3231,14 +3231,14 @@ public class PermissionDao
     
     public boolean dataSynchronizeUpdateStatus(String dataSynchronizeId, String status)
     {
-        String sql = "update treesoft_data_synchronize set status=? where id=?";
+        String sql = "update dms_data_synchronize set status=? where id=?";
         return jdbcTemplate.update(sql, status, dataSynchronizeId) > 0;
     }
     
     public Map<String, Object> getDataSynchronize(String id)
     {
         String sql =
-            "select id, name, souceConfig_id as souceConfigId,souceDataBase, doSql,targetConfig_id as targetConfigId, targetDataBase, targetTable,cron, operation,comments,status,state,qualification from  treesoft_data_synchronize where id=?";
+            "select id, name, souceConfig_id as souceConfigId,souceDataBase, doSql,targetConfig_id as targetConfigId, targetDataBase, targetTable,cron, operation,comments,status,state,qualification from  dms_data_synchronize where id=?";
         return jdbcTemplate.queryForMap(sql, id);
     }
     
@@ -3982,14 +3982,14 @@ public class PermissionDao
     public boolean dataSynchronizeLogSave(String status, String comments, String dataSynchronizeId)
     {
         String comments2 = comments.replaceAll("'", "''");
-        String sql = " insert into treesoft_data_synchronize_log(createDate, status,comments, data_synchronize_id ) values ( '" + DateUtil.getDateTime() + "','" + status + "','" + comments2 + "','"
+        String sql = " insert into dms_data_synchronize_log(createDate, status,comments, data_synchronize_id ) values ( '" + DateUtil.getDateTime() + "','" + status + "','" + comments2 + "','"
             + dataSynchronizeId + "')";
         return jdbcTemplate.update(sql) > 0;
     }
     
     public Page<Map<String, Object>> dataSynchronizeLogList(Page<Map<String, Object>> page, String dataSynchronizeId)
     {
-        String sql = "select id, createDate, status,comments from treesoft_data_synchronize_log where data_synchronize_id =? order by createdate desc ";
+        String sql = "select id, createDate, status,comments from dms_data_synchronize_log where data_synchronize_id =? order by createdate desc ";
         int rowCount = jdbcTemplate.queryForList(sql, dataSynchronizeId).size();
         List<Map<String, Object>> list = jdbcTemplate.queryForList(sql + " limit ?, ?", (page.getPageNo() - 1) * page.getPageSize(), page.getPageSize());
         page.setTotalCount(rowCount);
@@ -3999,18 +3999,18 @@ public class PermissionDao
     
     public boolean deleteDataSynchronizeLog(String[] ids)
     {
-        String sql = "delete from treesoft_data_synchronize_log where id in (:ids)";
+        String sql = "delete from dms_data_synchronize_log where id in (:ids)";
         return namedJdbcTemplate.update(sql, Collections.singletonMap("ids", Arrays.asList(ids))) > 0;
     }
     
     public boolean deleteDataSynchronizeLogByDS(String id)
     {
-        return jdbcTemplate.update("delete from treesoft_data_synchronize_log where data_synchronize_id =?", id) > 0;
+        return jdbcTemplate.update("delete from dms_data_synchronize_log where data_synchronize_id =?", id) > 0;
     }
     
     public boolean isTheConfigUsed(String[] ids)
     {
-        String sql = "select count(*) from treesoft_data_synchronize where souceConfig_id in (:ids) or targetConfig_id in (:ids)";
+        String sql = "select count(*) from dms_data_synchronize where souceConfig_id in (:ids) or targetConfig_id in (:ids)";
         return namedJdbcTemplate.queryForObject(sql, Collections.singletonMap("ids", Arrays.asList(ids)), Long.class) > 0;
     }
     
@@ -4023,7 +4023,7 @@ public class PermissionDao
     public boolean saveLog(String sql, String username, String ip)
     {
         sql = sql.replace("'", "''");
-        String sqls = "insert into treesoft_log(createdate,operator,username,log, ip) values (?, 'operator', ?, ?, ?)";
+        String sqls = "insert into dms_log(createdate,operator,username,log, ip) values (?, 'operator', ?, ?, ?)";
         return jdbcTemplate.update(sqls, DateUtil.getDateTime(), username, sql, ip) > 0;
     }
 }

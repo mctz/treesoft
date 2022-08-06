@@ -27,7 +27,7 @@ public class BackDbForPostgreSQL extends AbstractBackDb
     {
         StopWatch clock = new StopWatch();
         clock.start();
-        String sql = "select ip, port from treesoft_config where id=?";
+        String sql = "select ip, port from dms_config where id=?";
         Map<String, Object> map0 = new SysDataBaseUtil().queryForMap(sql, databaseConfigId);
         String ip = (String)map0.get("ip");
         String port = (String)map0.get("port");

@@ -45,7 +45,7 @@ public class BusiDataBaseUtil
     
     public BusiDataBaseUtil(String dbName, String databaseConfigId)
     {
-        String sql = " select databaseType, userName, password, port, ip, url from treesoft_config where id=?";
+        String sql = " select databaseType, userName, password, port, ip, url from dms_config where id=?";
         Map<String, Object> map = sysDataBaseUtil.queryForMap(sql, databaseConfigId);
         String ip = (String)map.get("ip");
         String port = (String)map.get("port");
