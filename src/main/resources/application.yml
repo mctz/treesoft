@@ -1,0 +1,18 @@
+server:
+   port: 8081
+spring:
+   mvc:
+      view:
+         prefix: /WEB-INF/views/
+         suffix: .jsp
+   profiles:
+      active: dev
+   datasource:
+      driverClassName: com.mysql.jdbc.Driver
+      initialSize: 5
+      maxActive: 20
+      minIdle: 5
+      type: com.alibaba.druid.pool.DruidDataSource
+      url: jdbc:mysql://127.0.0.1:33061/ry-vue?useSSL=false&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&autoReconnect=true
+      username: root
+      password: root
